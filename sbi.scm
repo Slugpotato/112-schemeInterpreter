@@ -17,6 +17,7 @@
 
 ; Define standard error
 (define *stderr* (current-error-port))
+(define numb 0)
 
 ; Find the name of the file being executed
 (define *run-file*
@@ -110,10 +111,12 @@
 
 
 (define (gotoThis val)
+  (set! numb (hash-ref *label-table* (car val)))
   ; (printf "Made it to gotoThis!!!!")
-  (printf "gotoThis val car: ~s~n"   (car val))
+  ; (printf "gotoThis val car: ~s~n"   (car val))
 
-  (display (hash-ref *label-table* (car val)))
+  ; (display (hash-ref *label-table* (car val)))
+  ; (printf "numb is: ~s~n"   numb)    
   )
 
 
@@ -281,50 +284,65 @@
 
 
 ; Actually run the program
-(define (runprog filename program numb)
+(define (runprog filename program)
 
-  (when (not(= 0 numb))
-      (print "numb is not 0")
-      (newline)
-      (map 
-        (lambda (line) 
+  ; (when (not(= 0 numb))
+  ;     (print "numb is not 0")
+  ;     (newline)
+  ;     (map 
+  ;       (lambda (line) 
 
-          ; one-armed if statement in scheme is when
-          (when (not (null? line))
+  ;         ; one-armed if statement in scheme is when
+  ;         (when (not (null? line))
 
-            ; (with-failure-continuation
-            ;   (lambda (error-record error-k)
-            ;   'error)
-            ;   (endofstring line)
-            ; )
-            (endofstring line)
 
-          )
-        )
-          program
+  ;           ; (with-failure-continuation
+  ;           ;   (lambda (error-record error-k)
+  ;           ;   'error)
+  ;           ;   (endofstring line)
+  ;           ; )
+  ;           (endofstring line)
+
+  ;         )
+  ;       )
+  ;         program
+  ;     )
+  ;   )
+   (when (> (length program) numb)
+    ; (printf "top numb is: ~s~n"   numb)    
+    ; (newline)
+    (let((line (list-ref program numb)))
+
+      ; (printf "numb is first: ~s~n"   numb)
+      (set! numb (+ 1 numb))
+      ; (printf "line is now: ~s~n"   numb)
+      (endofstring line)
+      
+
+      (runprog filename program)
       )
     )
-  (when (= 0 numb)
-    (print "numb is 0 ")
-    (newline)
-    (map 
-      (lambda (line) 
+    ; (map 
+    ;   (lambda (line) 
 
-        ; one-armed if statement in scheme is when
-        (when (not (null? line))
+    ;     ; one-armed if statement in scheme is when
+    ;     (when (not (null? line))
+    ;       (printf "middle numb is: ~s~n"   numb)    
 
-          ; (with-failure-continuation
-          ;   (lambda (error-record error-k)
-          ;   'error)
-          ;   (endofstring line)
-          ; )
-          (endofstring line)
+    ;       ; (with-failure-continuation
+    ;       ;   (lambda (error-record error-k)
+    ;       ;   'error)
+    ;       ;   (endofstring line)
+    ;       ; )
+    ;       (printf "Line is: ~s~n"   line)
 
-        )
-      )
-        program
-    )
-  )
+    ;       (endofstring line)
+
+    ;     )
+    ;   )
+    ;     program
+    ; )
+  
 )
 
 ; Search for labels
@@ -346,7 +364,7 @@
       ) program
     )
     
-    (runprog filename program 1)
+    (runprog filename program)
 )
 
 ; Main function
@@ -358,7 +376,7 @@
                (program (readlist-from-inputfile sbprogfile)))
               ; (write-program-by-line sbprogfile program))))
               (search-for-labels sbprogfile program)
-    (hash-for-each *label-table* (lambda (key value) (show key value)))
+    ; (hash-for-each *label-table* (lambda (key value) (show key value)))
               )))
 (main (vector->list (current-command-line-arguments)))
 
