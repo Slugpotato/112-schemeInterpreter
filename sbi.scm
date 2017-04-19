@@ -71,7 +71,7 @@
 
     ; Check for numbers
     ((number? expr)
-      expr)
+      (+ 0.0 expr))
 
     ; Check for strings
     ((string? expr)
@@ -96,7 +96,7 @@
           )
 
           ((number? runAgain)
-             runAgain)
+             (+ 0.0 runAgain))
           )
           )
       ; (printf "Car has a special symbol: ~s~n" (car expr))
