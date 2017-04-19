@@ -122,42 +122,12 @@
 
 
 (define (ifThis val)
-    ; (printf "Made it to ifThis!!!!")
-    ; (newline)
-    ; (printf "ifThis val: ~s~n"   val)
-    ; (newline)
-    ; (printf "ifThis val car: ~s~n"   (car val))
-    ; (newline)
-    ; (printf "ifThis val cdr: ~s~n"   (cdr val))
-    ; (newline)
-    ; (printf "ifThis val cdr: ~s~n"   (car(cdr val)))
-
-    ; (gotoThis (cdr val))
-    ; (display (hash-ref *label-table* (car(cdr val))))
-    ; (set! numb (hash-ref *label-table* (car(cdr val))))
+ 
     (when (functionEval (car val))
       ; (print " Is true!")
       (gotoThis (cdr val))
 
       )
-    ; (when (functionEval (car (cdr val)))
-      ; (set! numb (hash-ref *label-table* (car val)))
-      ; (set! numb (hash-ref *label-table* (car(cdr val))))
-      ; (set! numb (+ 1 numb))
-
-      ; )
-
-    ; ((eq? (car instr) 'if)
-    ;       ; (print "h_eval (car (cdr instr)) is ~s~n" (h_eval (car (cdr instr))))
-    ;      (if (h_eval (car (cdr instr)))
-
-    ;         (eval-line program (hash-ref l-hash (cadr (cdr instr))))
-    ;        (eval-line program (+ line-nr 1))))
-
-    ; (if (functionEval (car (cdr instr)))
-
-    ;         (eval-line program (hash-ref l-hash (cadr (cdr instr))))
-    ;        (eval-line program (+ line-nr 1)))
 
 )
 
@@ -177,9 +147,28 @@
     (variable-put! (car val) (+ (functionEval (cadr val)) 1)))
 )
 
+(define (inputThisToo val inNum)
+  (if (null? val)
+          inNum
+           (let ((input (read)))
+              (if (eof-object? input)
+                -1
+                (begin
+                  (variable-put! (car val) input)
+                  (set! inNum (+ 1 inNum))
+                  (inputThisToo (cdr val) inNum))))
 
+      )
+  )
 (define (inputThis val)
-    (printf "Made it to inputThis!!!!")
+    ; (printf "inputval is: ~s~n"   val)
+    ; (printf "Made it to inputThis!!!!")
+    (variable-put! 'inputcount 0)
+
+    (when (not(null? (car val)))
+      (begin
+    (variable-put! 'inputcount (inputThisToo val 0))))
+      
 )
 
 ; Print function call
@@ -334,6 +323,7 @@
     )
 
 
+; Recursion works without gotos, will upgrade to accomadate goto's
     ; (map 
     ;   (lambda (line) 
 
