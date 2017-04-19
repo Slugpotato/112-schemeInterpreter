@@ -80,7 +80,7 @@
     ((hash-has-key? *variable-table* expr)
       (hash-ref *variable-table* expr))
 
-  
+
   ((list? expr)
     (if (hash-has-key? *variable-table* (car expr))
       (let((runAgain (hash-ref *variable-table*  (car expr))))
@@ -89,17 +89,17 @@
               ; (printf "runAgain is a procedure: ~s~n" runAgain)
              (apply runAgain (map (lambda (x) (functionEval x)) (cdr expr))))
           ; )
-          ; ((vector? runAgain)
-          ;   ; (printf "runAgain is a vector: ~s~n" runAgain)
-          ;    (vector-ref runAgain (cadr expr))
-          ; )
+          ((vector? runAgain)
+            ; (printf "runAgain is a vector: ~s~n" runAgain)
+             (vector-ref runAgain (cadr expr))
+          )
 
           ((number? runAgain)
              runAgain)
           )
           )
       ; (printf "Car has a special symbol: ~s~n" (car expr))
-      (printf "Car is not a special symbol: ~s~n" expr)
+      (printf "Error with type of variable input")
 
     )
     )
@@ -120,7 +120,11 @@
 
 
 (define (letThis val)
-    (printf "Made it to letThis!!!!")
+    ; (printf "Made it to letThis!!!!")
+    ; (printf "letThis val car: ~s~n"   (car val))
+    ; (printf "letThis val cdr: ~s~n"   (cdr val))
+    
+    (variable-put! (car val) (functionEval (cadr val)))
 )
 
 
@@ -203,6 +207,8 @@
         (-       ,-)
         (*       ,*)
         (/       ,/)
+        ; (/       ,(lambda (x y) ((when (or (= (+ x 0.0) 0) (= (+ y 0.0) 0.0))))))
+        
         (abs     ,abs)
         (<=      ,<=)
         (>=      ,>=)
@@ -265,6 +271,12 @@
 
       ; one-armed if statement in scheme is when
       (when (not (null? line))
+
+        ; (with-failure-continuation
+        ;   (lambda (error-record error-k)
+        ;   'error)
+        ;   (endofstring line)
+        ; )
         (endofstring line)
 
       )
@@ -291,7 +303,7 @@
       )
       ) program
     )
-      
+    
     (runprog filename program)
 )
 
