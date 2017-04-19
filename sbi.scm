@@ -110,12 +110,21 @@
 
 
 (define (gotoThis val)
-  (printf "Made it to gotoThis!!!!")
+  ; (printf "Made it to gotoThis!!!!")
+  (printf "gotoThis val car: ~s~n"   (car val))
+
+  (display (hash-ref *label-table* (car val)))
   )
 
 
 (define (ifThis val)
     (printf "Made it to ifThis!!!!")
+    (printf "ifThis val car: ~s~n"   (car val))
+    ; (if (functionEval (car (cdr instr)))
+
+    ;         (eval-line program (hash-ref l-hash (cadr (cdr instr))))
+    ;        (eval-line program (+ line-nr 1)))
+
 )
 
 
@@ -130,6 +139,8 @@
 
 (define (dimThis val)
     (printf "Made it to dimThis!!!!")
+    (let((arr (make-vector (functionEval (cadr val)) (car val))))
+    (variable-put! (car val) (+ (functionEval (cadr val)) 1)))
 )
 
 
@@ -207,8 +218,12 @@
         (-       ,-)
         (*       ,*)
         (/       ,/)
-        ; (/       ,(lambda (x y) ((when (or (= (+ x 0.0) 0) (= (+ y 0.0) 0.0))))))
-        
+        ; (/       ,(lambda (x y) (when (= y 0) (/(+ y 0.0))) (when (not(= y 0)) (print "y is not 0")) ))     
+; (print " = +inf.0 ")
+
+         ; (= (+ y 0.0) 0.0))))))
+
+
         (abs     ,abs)
         (<=      ,<=)
         (>=      ,>=)
@@ -222,6 +237,8 @@
         (asin    ,asin)
         (acos    ,acos)
         (log2    ,(lambda (x) (/ (log x) (log 2.0))))
+        ; (log2    ,(lambda (x) (if (= x 0) (/ (log (+ x 0.0)) (log 2.0)) (/ (log x) (log 2.0))
+          ; )))
         (round   ,round)
         (trunc   ,truncate)
         (^       ,expt)
@@ -264,24 +281,49 @@
 
 
 ; Actually run the program
-(define (runprog filename program)
+(define (runprog filename program numb)
 
-  (map 
-    (lambda (line) 
+  (when (not(= 0 numb))
+      (print "numb is not 0")
+      (newline)
+      (map 
+        (lambda (line) 
 
-      ; one-armed if statement in scheme is when
-      (when (not (null? line))
+          ; one-armed if statement in scheme is when
+          (when (not (null? line))
 
-        ; (with-failure-continuation
-        ;   (lambda (error-record error-k)
-        ;   'error)
-        ;   (endofstring line)
-        ; )
-        (endofstring line)
+            ; (with-failure-continuation
+            ;   (lambda (error-record error-k)
+            ;   'error)
+            ;   (endofstring line)
+            ; )
+            (endofstring line)
 
+          )
+        )
+          program
       )
     )
-      program
+  (when (= 0 numb)
+    (print "numb is 0 ")
+    (newline)
+    (map 
+      (lambda (line) 
+
+        ; one-armed if statement in scheme is when
+        (when (not (null? line))
+
+          ; (with-failure-continuation
+          ;   (lambda (error-record error-k)
+          ;   'error)
+          ;   (endofstring line)
+          ; )
+          (endofstring line)
+
+        )
+      )
+        program
+    )
   )
 )
 
@@ -304,7 +346,7 @@
       ) program
     )
     
-    (runprog filename program)
+    (runprog filename program 1)
 )
 
 ; Main function
