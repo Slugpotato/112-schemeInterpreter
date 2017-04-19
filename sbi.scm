@@ -65,6 +65,11 @@
 (define (functionEval expr)
   (cond
 
+    ; Check for numbers
+    ((number? expr)
+      expr)
+
+    ; Check for strings
     ((string? expr)
       expr)
 
