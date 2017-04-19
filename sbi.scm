@@ -12,6 +12,8 @@
 ;;    program, which is the executed.  Currently it is only printed.
 ;;
 
+; (printf "Found a list and is pair car: ~s~n"   (car linestosearch))
+; (printf "Found a list and is not pair1: ~s~n"   linestosearch)
 
 ; Define standard error
 (define *stderr* (current-error-port))
@@ -62,6 +64,7 @@
 
 ;;;;;;;;; Function calls
 
+; Evaluate the function given from a function call
 (define (functionEval expr)
   (cond
 
@@ -73,12 +76,64 @@
     ((string? expr)
       expr)
 
+    ; Checks to see if this expression is a special symbol 
+    ((hash-has-key? *variable-table* expr)
+      (hash-ref *variable-table* expr))
 
+  
+  ((list? expr)
+    (if (hash-has-key? *variable-table* (car expr))
+      (let((runAgain (hash-ref *variable-table*  (car expr))))
+          (cond 
+            ((procedure? runAgain)
+              ; (printf "runAgain is a procedure: ~s~n" runAgain)
+             (apply runAgain (map (lambda (x) (functionEval x)) (cdr expr))))
+          ; )
+          ; ((vector? runAgain)
+          ;   ; (printf "runAgain is a vector: ~s~n" runAgain)
+          ;    (vector-ref runAgain (cadr expr))
+          ; )
+
+          ((number? runAgain)
+             runAgain)
+          )
+          )
+      ; (printf "Car has a special symbol: ~s~n" (car expr))
+      (printf "Car is not a special symbol: ~s~n" expr)
+
+    )
+    )
 
   )
 
 )
 
+
+(define (gotoThis val)
+  (printf "Made it to gotoThis!!!!")
+  )
+
+
+(define (ifThis val)
+    (printf "Made it to ifThis!!!!")
+)
+
+
+(define (letThis val)
+    (printf "Made it to letThis!!!!")
+)
+
+
+(define (dimThis val)
+    (printf "Made it to dimThis!!!!")
+)
+
+
+(define (inputThis val)
+    (printf "Made it to inputThis!!!!")
+)
+
+; Print function call
 (define (printThis val)
   (map (lambda (line) (display (functionEval line))) val)
   ; (map (lambda (line) (display val)) val)
@@ -95,20 +150,14 @@
           )
   `(      ; This hash table translates SB functions to our functions.
       (print   ,printThis)
-      ; (dim   ,sb_dim)
-      ; (let   ,sb_let)
-      ; (input ,sb_input)
-      ; (if    (void))
-      ; (goto  (void)))
+      (input   ,inputThis)
+      (dim     ,dimThis)
+      (let     ,letThis)
+      (if      ,ifThis)
+      (goto    ,gotoThis)
   )
 
 )
-
-
-
-
-
-
 
 
 ;; Label table
@@ -186,79 +235,22 @@
     (newline)
 )
 
-
-; (define (endofstring linestosearch)
-;   (printf "~s~n" linestosearch)
-;   (if (null? (cdr linestosearch))
-;     (car  linestosearch)
-    
-
-;     (endofstring (cdr linestosearch))))
-
 (define (foundList linestosearch)
-  ; (printf "linesearch is ~s~n"   linestosearch)
-  ; (when (< 1 (length linestosearch))
 
     (when (pair? linestosearch)
 
-      ((hash-ref *function-table* (car linestosearch)) (cdr linestosearch))
-    ; ((label-get! (car linestosearch)) (cadr linestosearch))
-    ; (printf "Found a list and is pair car: ~s~n"   (car linestosearch))
-    ; (printf "Found a list and is not pair1: ~s~n"   linestosearch)
+((hash-ref *function-table* (car linestosearch)) (cdr linestosearch))
     )
-    ; (if (pair? linestosearch)
-
-    ; (printf "Found a list and is pair cdr: ~s~n"   (cdr linestosearch))
-    ; (printf "Found a list and is not pair2: ~s~n"   linestosearch)
-  ; )
-  
-
   )
 
 (define (endofstring linestosearch)
-  ; (printf "Top: ~s~n" linestosearch)
-
-  ; (when (< 1 (length linestosearch))
-  ;   ;   (printf "~s~n" linestosearch)
-  ;   ; )
-  ;   (if (list? (cdr linestosearch))
-
-      
-  ;     (printf "was list, cadr is: ~s~n" (cdr linestosearch))
-  ;     (printf "wasn't list, car is ~s~n" (car linestosearch))
-
-
-  ;   )
-  ; )
-  ; (else (printf "~s~n" linestosearch))
 
   (if (null? (cdr linestosearch))
-    ; (when (> 1 (length line))
-    ;   (printf "~s~n" linestosearch)
-    ; )
-
-    ; (when (> 1 (length line))
-    ;   (printf "Made it to here ~s~n" linestosearch)
-    ; (printf "cdr was null, car is: ~s~n" (car  linestosearch))
-    ; (car  linestosearch)
+    
     (foundList (car linestosearch))
-    ; (endofstring (cdr linestosearch))
     (endofstring (cdr linestosearch))
 
-    ; (printf "cdr is: ~s~n" (cdr linestosearch))
-
-
     )
-
-  ; (if (null? (cdr linestosearch))
-    
-  ;   (car  linestosearch)
-  ;   (endofstring (cdr linestosearch))
-
-  ;   ; (printf "cdr is: ~s~n" (cdr linestosearch))
-
-
-  ;   )
 
   )
 
@@ -274,20 +266,11 @@
       ; one-armed if statement in scheme is when
       (when (not (null? line))
         (endofstring line)
-        
-
-            ; (printf "~s~n" (cadr line))
-            ; (printf "~s~n" (- (car line) 1) )
-
-          
-        
 
       )
     )
       program
   )
-    
-;     (printf ")~n"))
 )
 
 ; Search for labels
@@ -300,8 +283,6 @@
         (when (< 1 (length line))
           (when (not (list? (cadr line)))
 
-            ; (printf "~s~n" (cadr line))
-            ; (printf "~s~n" (- (car line) 1) )
             (label-put! (cadr line) (- (car line) 1))
 
           )
@@ -312,8 +293,8 @@
     )
       
     (runprog filename program)
-;     (printf ")~n"))
 )
+
 ; Main function
 (define (main arglist)
 
@@ -323,7 +304,7 @@
                (program (readlist-from-inputfile sbprogfile)))
               ; (write-program-by-line sbprogfile program))))
               (search-for-labels sbprogfile program)
-              (hash-for-each *label-table* (lambda (key value) (show key value)))
+    (hash-for-each *label-table* (lambda (key value) (show key value)))
               )))
 (main (vector->list (current-command-line-arguments)))
 
