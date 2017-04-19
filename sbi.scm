@@ -114,6 +114,7 @@
   (set! numb (hash-ref *label-table* (car val)))
   ; (printf "Made it to gotoThis!!!!")
   ; (printf "gotoThis val car: ~s~n"   (car val))
+  ; (printf "gotoThis val: ~s~n"   val)
 
   ; (display (hash-ref *label-table* (car val)))
   ; (printf "numb is: ~s~n"   numb)    
@@ -121,8 +122,38 @@
 
 
 (define (ifThis val)
-    (printf "Made it to ifThis!!!!")
-    (printf "ifThis val car: ~s~n"   (car val))
+    ; (printf "Made it to ifThis!!!!")
+    ; (newline)
+    ; (printf "ifThis val: ~s~n"   val)
+    ; (newline)
+    ; (printf "ifThis val car: ~s~n"   (car val))
+    ; (newline)
+    ; (printf "ifThis val cdr: ~s~n"   (cdr val))
+    ; (newline)
+    ; (printf "ifThis val cdr: ~s~n"   (car(cdr val)))
+
+    ; (gotoThis (cdr val))
+    ; (display (hash-ref *label-table* (car(cdr val))))
+    ; (set! numb (hash-ref *label-table* (car(cdr val))))
+    (when (functionEval (car val))
+      ; (print " Is true!")
+      (gotoThis (cdr val))
+
+      )
+    ; (when (functionEval (car (cdr val)))
+      ; (set! numb (hash-ref *label-table* (car val)))
+      ; (set! numb (hash-ref *label-table* (car(cdr val))))
+      ; (set! numb (+ 1 numb))
+
+      ; )
+
+    ; ((eq? (car instr) 'if)
+    ;       ; (print "h_eval (car (cdr instr)) is ~s~n" (h_eval (car (cdr instr))))
+    ;      (if (h_eval (car (cdr instr)))
+
+    ;         (eval-line program (hash-ref l-hash (cadr (cdr instr))))
+    ;        (eval-line program (+ line-nr 1))))
+
     ; (if (functionEval (car (cdr instr)))
 
     ;         (eval-line program (hash-ref l-hash (cadr (cdr instr))))
@@ -286,28 +317,7 @@
 ; Actually run the program
 (define (runprog filename program)
 
-  ; (when (not(= 0 numb))
-  ;     (print "numb is not 0")
-  ;     (newline)
-  ;     (map 
-  ;       (lambda (line) 
-
-  ;         ; one-armed if statement in scheme is when
-  ;         (when (not (null? line))
-
-
-  ;           ; (with-failure-continuation
-  ;           ;   (lambda (error-record error-k)
-  ;           ;   'error)
-  ;           ;   (endofstring line)
-  ;           ; )
-  ;           (endofstring line)
-
-  ;         )
-  ;       )
-  ;         program
-  ;     )
-  ;   )
+  
    (when (> (length program) numb)
     ; (printf "top numb is: ~s~n"   numb)    
     ; (newline)
@@ -317,11 +327,13 @@
       (set! numb (+ 1 numb))
       ; (printf "line is now: ~s~n"   numb)
       (endofstring line)
-      
+
 
       (runprog filename program)
       )
     )
+
+
     ; (map 
     ;   (lambda (line) 
 
